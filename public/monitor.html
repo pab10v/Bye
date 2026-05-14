@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PPO Reactor Monitor</title>
+  <link rel="stylesheet" href="monitor.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Reactor v0.1</h1>
+      <div class="badge">PPO · OBFUSCATION ENGINE</div>
+    </div>
+    <div class="header-right">
+      <div id="engine-badge" class="engine-badge engine-unknown">ENGINE</div>
+      <div id="activity-pulse" class="pulse-indicator"></div>
+    </div>
+  </div>
+
+  <!-- DPI Threat Indicator -->
+  <div id="threat-banner" class="threat-banner threat-none">
+    <div class="threat-left">
+      <div id="threat-dot" class="threat-dot"></div>
+      <div class="threat-text">
+        <span id="threat-label">NO SURVEILLANCE DETECTED</span>
+        <span id="threat-signal" class="threat-signal"></span>
+      </div>
+    </div>
+    <div id="threat-score" class="threat-score">0%</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Evasion Strategy (FSM)</div>
+    <div class="state-container">
+      <div id="fsm-state">
+        <div id="fsm-state-label">INITIALIZING...</div>
+        <div id="fsm-state-desc" class="state-desc"></div>
+      </div>
+    </div>
+
+    <div class="matrix-header">
+      <span></span>
+      <span class="matrix-label">→ SPLIT</span>
+      <span class="matrix-label">→ DISORD</span>
+      <span class="matrix-label">→ CHAFF</span>
+    </div>
+    <div class="matrix-row-label-grid">
+      <div class="matrix-row-group">
+        <span class="matrix-row-label">SPLIT</span>
+        <div class="matrix-row" id="matrix-row-0"></div>
+      </div>
+      <div class="matrix-row-group">
+        <span class="matrix-row-label">DISORD</span>
+        <div class="matrix-row" id="matrix-row-1"></div>
+      </div>
+      <div class="matrix-row-group">
+        <span class="matrix-row-label">CHAFF</span>
+        <div class="matrix-row" id="matrix-row-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tactical Override</div>
+    <div class="controls-grid">
+      <button class="tactic-btn" data-state="1" title="Force SPLIT: stochastic SNI fragmentation">
+        <span class="tactic-icon">✂</span>
+        <span>SPLIT</span>
+        <span class="tactic-sub">SNI frag</span>
+      </button>
+      <button class="tactic-btn" data-state="2" title="Force DISORDER: TCP window manipulation">
+        <span class="tactic-icon">⊞</span>
+        <span>DISORDER</span>
+        <span class="tactic-sub">TCP win</span>
+      </button>
+      <button class="tactic-btn" data-state="3" title="Force CHAFF: pink noise injection">
+        <span class="tactic-icon">≋</span>
+        <span>CHAFF</span>
+        <span class="tactic-sub">noise inj</span>
+      </button>
+    </div>
+    <div id="override-notice" class="override-notice hidden">
+      ⚡ Manual override active — FSM auto-transition paused
+    </div>
+    <div class="chunk-intensity-row">
+      <span class="stat-label">Chunk Intensity</span>
+      <button id="btn-chunk-intensity" class="tactic-btn chunk-intensity-btn">
+        <span class="tactic-icon">⊞</span>
+        <span id="chunk-intensity-label">MILD</span>
+        <span class="tactic-sub">click to toggle</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Cumulative Metrics</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">Secured Data</span>
+        <span class="stat-value" id="total-bytes">0 B</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Tactic Rotations</span>
+        <span class="stat-value" id="total-transitions">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Mesh Peers</span>
+        <span class="stat-value" id="peer-count">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Engine Uptime</span>
+        <span class="stat-value" id="uptime">0s</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Mesh IQ Updates</span>
+        <span class="stat-value" id="mesh-updates">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Active Requests</span>
+        <span class="stat-value" id="active-requests">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="probe-section">
+    <div class="section-title">Censorship Probe</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">Interval</span>
+        <span class="stat-value" id="probe-interval">300s</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Canary URLs</span>
+        <span class="stat-value" id="probe-canary-count">5</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Last Failures</span>
+        <span class="stat-value" id="probe-failures">—</span>
+      </div>
+    </div>
+    <div class="stat-item" style="margin-top: 8px">
+      <span class="stat-label">Last Cycle</span>
+      <span class="stat-value" id="probe-last-cycle" style="font-size: 0.8rem">Never</span>
+    </div>
+    <div id="probe-results" class="probe-results-list"></div>
+    <div class="section-subtitle" style="margin-top: 14px">Canary URLs</div>
+    <div id="canary-url-list" class="canary-url-list"></div>
+    <div class="canary-add-row">
+      <input type="text" id="canary-url-input" class="canary-url-input"
+             placeholder="https://example.com" autocomplete="off" spellcheck="false">
+      <button id="btn-canary-add" class="tactic-btn canary-add-btn">
+        <span>Add</span>
+      </button>
+    </div>
+    <div id="canary-url-error" class="canary-url-error hidden"></div>
+    <button id="btn-canary-reset" class="tactic-btn" style="margin-top: 8px; width: 100%">
+      <span class="tactic-icon">↺</span>
+      <span>Reset to defaults</span>
+      <span class="tactic-sub">restore hardwired list</span>
+    </button>
+  </div>
+
+  <div class="section" id="evaluator-section">
+    <div class="section-title">
+      Strategy Evaluator
+      <span id="evaluator-status-badge" class="badge">INACTIVE</span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">SPLIT rate</span>
+        <span class="stat-value" id="eval-rate-split">—</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">DISORDER rate</span>
+        <span class="stat-value" id="eval-rate-disorder">—</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">CHAFF rate</span>
+        <span class="stat-value" id="eval-rate-chaff">—</span>
+      </div>
+    </div>
+    <div class="stat-item" style="margin-top: 8px">
+      <span class="stat-label">Last Gradient Update</span>
+      <span class="stat-value" id="eval-last-update" style="font-size: 0.8rem">Never</span>
+    </div>
+    <div class="controls-grid" style="grid-template-columns: 1fr 1fr; margin-top: 10px">
+      <button id="btn-toggle-evaluator" class="tactic-btn">
+        <span class="tactic-icon">⏸</span>
+        <span>Pause</span>
+        <span class="tactic-sub">gradient updates</span>
+      </button>
+      <button id="btn-reset-evaluator" class="tactic-btn">
+        <span class="tactic-icon">↺</span>
+        <span>Reset</span>
+        <span class="tactic-sub">uniform matrix</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Forensic Event Log</div>
+    <div id="event-log" class="event-log">
+      <div class="log-entry system">Engine initialized. Ready for interception.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 DE-TRACKER FORENSIC LABS
+  </div>
+
+  <script src="monitor.js"></script>
+</body>
+</html>

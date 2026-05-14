@@ -1,0 +1,19 @@
+{
+  "name": "ppo-chrome-extension",
+  "version": "0.1.0",
+  "description": "Polymorphic Pipeline Obfuscation Chrome Extension",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "build:wasm": "GOOS=js GOARCH=wasm go build -o public/ppo.wasm ./wasm/",
+    "test": "vitest --run",
+    "dev": "esbuild src/background.ts --bundle --outfile=dist/background.js --platform=browser --target=chrome110 --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "esbuild": "^0.20.2",
+    "fast-check": "^3.19.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

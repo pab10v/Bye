@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bye — Polymorphic Pipeline Obfuscation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050508;
+            --surface: rgba(255, 255, 255, 0.05);
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --text: #ffffff;
+            --text-dim: #a0a0c0;
+            --accent: #ff007a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Effects --- */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(112, 0, 255, 0.05) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero-img {
+            max-width: 300px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(112, 0, 255, 0.4)); }
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 242, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+
+        /* --- Sections --- */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 242, 255, 0.2);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .card p {
+            color: var(--text-dim);
+        }
+
+        /* --- Architecture --- */
+        .arch-box {
+            background: #000;
+            padding: 3rem;
+            border-radius: 30px;
+            border: 1px solid var(--secondary);
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .arch-line {
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-highlight {
+            color: var(--primary);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- Modal (Implicit for Terms/Privacy) --- */
+        .legal-section {
+            max-width: 800px;
+            margin: 4rem auto;
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+
+        .legal-section h2 {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .legal-section p {
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .hero { padding: 4rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo">BYE</div>
+            <div class="cta-group">
+                <a href="#architecture" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Docs</a>
+                <a href="#privacy" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Privacy</a>
+            </div>
+        </header>
+
+        <section class="hero">
+            <img src="hero.png" alt="Bye Hero Logo" class="hero-img">
+            <h1>Privacy Through <br> Obfuscation.</h1>
+            <p>Bye is a polymorphic transport-layer obfuscator that makes your digital footprint indistinguishable from noise.</p>
+            <div class="cta-group">
+                <a href="https://github.com/artesanous/Bye" class="btn btn-primary">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub Project
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2v-2zm0-10h2v8h-2V6z"/></svg>
+                    Chrome Web Store
+                </a>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2 class="section-title">Core Technologies</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>SNI Fragmentation</h3>
+                    <p>Transparently splits TLS ClientHello packets into variable-sized fragments, defeating SNI-based filtering and fingerprinting.</p>
+                </div>
+                <div class="card">
+                    <h3>Polymorphic Engine</h3>
+                    <p>Powered by Go & WebAssembly. Uses Markov Chains to dynamically evolve evasion tactics (Split, Disorder, Chaff) based on network conditions.</p>
+                </div>
+                <div class="card">
+                    <h3>Mesh Intelligence</h3>
+                    <p>A decentralized P2P mesh network that shares real-time DPI detection telemetry between instances to adapt globally.</p>
+                </div>
+                <div class="card">
+                    <h3>Fail-Open Safety</h3>
+                    <p>Advanced PAC script logic ensures you never lose connection. If the obfuscation layer fails, Bye falls back to direct traffic instantly.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture">
+            <h2 class="section-title">System Architecture</h2>
+            <div class="arch-box">
+                <div class="arch-line">[L1] <span class="arch-highlight">Orchestration Layer (TypeScript)</span></div>
+                <div class="arch-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Proxy API & PAC Management</div>
+                <div class="arch-line">&nbsp;&nbsp;&nbsp;&nbsp;└── WebRTC Mesh Signaling</div>
+                <div class="arch-line">[L2] <span class="arch-highlight">Binary Evasion Engine (Go/Wasm)</span></div>
+                <div class="arch-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Stochastic SNI Splitting</div>
+                <div class="arch-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Pink Noise Injection Pipeline</div>
+                <div class="arch-line">[L3] <span class="arch-highlight">Forensic Analytics (EKF)</span></div>
+                <div class="arch-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Extended Kalman Filter for DPI detection</div>
+            </div>
+        </section>
+
+        <section id="filtering">
+            <h2 class="section-title">Filtering Policy</h2>
+            <div class="legal-section">
+                <p>Bye is a <strong>Neutral Transport Layer</strong>. We do not inspect, modify, or filter the content of your communications. Our policy is strictly defined by:</p>
+                <ul>
+                    <li><strong>No Content Inspection:</strong> We only modify the transport-layer "shape" of packets.</li>
+                    <li><strong>Zero Logging:</strong> No URLs, IPs, or payloads are ever persisted.</li>
+                    <li><strong>Bypass by Default:</strong> Critical infrastructure, local networks, and banking domains are automatically bypassed to ensure security and compliance.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="privacy">
+            <h2 class="section-title">Privacy & Terms</h2>
+            <div class="legal-section">
+                <h2>Privacy Policy</h2>
+                <p>We believe in absolute privacy. Bye does not collect, store, or transmit any personal data. All obfuscation happens locally on your machine. Peer-to-peer telemetry shared via the mesh is strictly limited to network performance metrics and contains no identifying information.</p>
+                
+                <h2>Terms of Service</h2>
+                <p>Bye is provided "as is" without warranty of any kind. It is a tool for privacy and research. Users are responsible for complying with their local laws and regulations regarding the use of obfuscation technologies.</p>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://github.com/artesanous/Bye">Source Code</a>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#filtering">Filtering Policy</a>
+                <a href="mailto:contact@ppo.detracker.us">Contact</a>
+            </div>
+            <p>&copy; 2026 Bye Project. Distributed under MIT License.</p>
+        </footer>
+    </div>
+</body>
+</html>

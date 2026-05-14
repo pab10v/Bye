@@ -1,0 +1,45 @@
+# --- Dependencies ---
+node_modules/
+/jspm_packages/
+/wasm/vendor/
+
+# --- Build Outputs ---
+/dist/
+/public/ppo.wasm
+/public/background.js
+/public/monitor.js
+/public/monitor.css
+/public/wasm_exec.js
+
+# --- Go / Wasm ---
+*.wasm
+/wasm/bin/
+
+# --- Logs & Performance ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+.stylelintcache
+.npm/
+
+# --- IDE & System ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Environment ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Coverage ---
+/coverage/
+
+# --- Tests ---
+/tests-results/
